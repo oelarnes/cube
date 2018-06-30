@@ -5,7 +5,7 @@ import requests, time
 
 SEP_TYPE = 'Pipe'
 
-color_name_map = {
+COLOR_NAME_MAP = {
     "W":    "White",
     "U":    "Blue",
     "B":    "Black",
@@ -35,6 +35,18 @@ color_name_map = {
     "":     "Colorless",
 }
 
+DEFAULT_ATTRS = ['name', 'color_identity_name', 'type', 'cmc', 'subtypes']
+
+def get_attr_name(attr):
+    map = {
+        'cmc': 'CMC',
+        'name': 'Card Name',
+        'color_identity_name': 'Color Identity',
+    }
+    if attr in map:
+        return map[attr]
+    return attr.title()
+
 def get_card(card_name, exact=True):
     query_type = 'exact' if exact else 'fuzzy'
     card_name = card_name.replace(' ', '+')
@@ -42,11 +54,11 @@ def get_card(card_name, exact=True):
     time.sleep(.1) # rate limit by request
     return(r.json())
 
-def card_attr_line(card_name, *argv):
+def card_attr_line(card_name, attrs):
     card = get_card(card_name)
-    attrs = [format_attr(get_attr(card, attr)) for attr in argv]
+    card_attrs = [format_attr(get_attr(card, attr)) for attr in attrs]
 
-    return(join_line(attrs))
+    return(join_line(card_attrs))
 
 def join_line(line):
     if SEP_TYPE == 'Pipe':
@@ -73,7 +85,7 @@ def get_attr(card, attr):
         else:
             return('')
     if attr == 'color_identity_name':
-        return(color_name_map[format_attr(card['color_identity'])])
+        return(COLOR_NAME_MAP[format_attr(card['color_identity'])])
     return(card[attr])
 
 def format_attr(attr):
@@ -81,5 +93,5 @@ def format_attr(attr):
         return(''.join(attr))
     return(str(attr))
 
-def get_info_line(card_name):
-    return card_attr_line(card_name, 'name', 'color_identity_name', 'type', 'cmc', 'subtypes')
+def get_info_line(card_name, attrs):
+    return card_attr_line(card_name, attrs)
