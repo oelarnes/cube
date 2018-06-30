@@ -1,6 +1,6 @@
-Black Lotus
-Savannah Lions
-Lightning Bolt
+Black Lotus|leb
+Savannah Lions|leb
+Lightning Bolt|leb
 Elspeth, Knight-Errant
 Jace, the Mind Sculptor
 Whip of Erebos

@@ -47,15 +47,29 @@ def get_attr_name(attr):
         return map[attr]
     return attr.title()
 
-def get_card(card_name, exact=True):
+
+def get_card(card_name, exact=True, set=None):
     query_type = 'exact' if exact else 'fuzzy'
-    card_name = card_name.replace(' ', '+')
-    r = requests.get('https://api.scryfall.com/cards/named?{}={}'.format(query_type, card_name))
+
+    params = {
+        query_type: card_name
+    }
+    if set is not None:
+        params['set'] = set
+    r = requests.get('https://api.scryfall.com/cards/named', params=params)
     time.sleep(.1) # rate limit by request
     return(r.json())
 
-def card_attr_line(card_name, attrs):
-    card = get_card(card_name)
+
+def card_attr_line(card_input, attrs):
+    split = card_input.strip('\n').split('|')
+    card_name = split[0]
+    if len(split) >= 2:
+        set = split[1]
+    else:
+        set = None
+
+    card = get_card(card_name, set=set)
     card_attrs = [format_attr(get_attr(card, attr)) for attr in attrs]
 
     return(join_line(card_attrs))
@@ -68,11 +82,13 @@ def join_line(line):
     if SEP_TYPE == 'Tab':
         return('\t'.join(line))
 
+
 def strip_supertype(type_line):
     supertypes = ['Basic', 'Legendary', 'Ongoing', 'Snow', 'World']
     for type in supertypes:
         type_line = type_line.replace(type + ' ', '')
     return(type_line)
+
 
 def get_attr(card, attr):
     if attr == 'type':
@@ -88,10 +104,8 @@ def get_attr(card, attr):
         return(COLOR_NAME_MAP[format_attr(card['color_identity'])])
     return(card[attr])
 
+
 def format_attr(attr):
     if type(attr)== type([]):
         return(''.join(attr))
     return(str(attr))
-
-def get_info_line(card_name, attrs):
-    return card_attr_line(card_name, attrs)
