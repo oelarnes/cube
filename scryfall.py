@@ -1,51 +1,27 @@
 #!/usr/bin/env python3.6
 # scryfall.py
 
-import requests, time
+import requests, time, logging, card_attrs
+
+logging.basicConfig(level=logging.DEBUG)
 
 SEP_TYPE = 'Pipe'
 
-COLOR_NAME_MAP = {
-    "W":    "White",
-    "U":    "Blue",
-    "B":    "Black",
-    "R":    "Red",
-    "G":    "Green",
-    "UW":   "Azorius",
-    "BU":   "Dimir",
-    "BR":   "Rakdos",
-    "GR":   "Gruul",
-    "GW":   "Selesnya",
-    'BW':   "Orzhov",
-    "BG":   "Golgari",
-    "GU":   "Simic",
-    "RU":   "Izzet",
-    "RW":   "Boros",
-    "BUW":  "Esper",
-    "BRU":  "Grixis",
-    "BGR":  "Jund",
-    "GRW":  "Naya",
-    "GUW":  "Bant",
-    "BGW":  "Abzan",
-    "BGU":  "Sultai",
-    "GRU":  "Temur",
-    "RUW":  "Jeskai",
-    "BRW":  "Mardu",
-    "BGRUW":    "Five-Color",
-    "":     "Colorless",
-}
+API_URL = 'https://api.scryfall.com/cards'
 
-DEFAULT_ATTRS = ['name', 'color_identity_name', 'type', 'cmc', 'subtypes']
+CUBE_ATTRS = ['name', 'color_identity_name', 'type', 'cmc', 'subtypes']
+SET_ATTRS = ['name', 'image_link', 'set_template_sort_order', 'color_identity_name', 'type', 'rarity', 'cmc', 'subtypes', 'power', 'toughness', 'oracle_one_line']
+
 
 def get_attr_name(attr):
     map = {
         'cmc': 'CMC',
-        'name': 'Card Name',
         'color_identity_name': 'Color Identity',
+        'pt': 'P/T',
     }
     if attr in map:
         return map[attr]
-    return attr.title()
+    return attr.replace('_',' ').title()
 
 
 def get_card(card_name, exact=True, set=None):
@@ -56,9 +32,59 @@ def get_card(card_name, exact=True, set=None):
     }
     if set is not None:
         params['set'] = set
-    r = requests.get('https://api.scryfall.com/cards/named', params=params)
+    r = requests.get('{}/named'.format(API_URL), params=params)
     time.sleep(.1) # rate limit by request
     return(r.json())
+
+
+def form_query(query_params):
+    elements = ['{}:{}'.format(it[0], it[1]) for it in query_params.items()]
+    return '+'.join(elements)
+
+
+def get_set(set_code, additional_params={}, order='set'):
+    query_params = {
+        'e': set_code,
+        'is': 'booster',
+        '-t': 'basic',
+    }
+
+    query_params.update(additional_params)
+
+    query = form_query(query_params)
+    params = {
+        'order': order,
+        'q': query
+    }
+
+    params_str = '&'.join([
+        '{}={}'.format(it[0], it[1]) for it in params.items()
+    ])
+
+    url = '{}/search'.format(API_URL)
+
+    has_more=True
+    cards = []
+
+    while has_more:
+        r = requests.get(url, params=params_str)
+        time.sleep(.1)
+        response = r.json()
+        cards.extend(response['data'])
+
+        has_more = response['has_more']
+
+        if has_more:
+            url=response['next_page']
+            params={}
+
+    return cards
+
+
+def set_images(set_code, format='normal'):
+    cards = get_set(set_code)
+    tags = [card_attrs.image_tag_from_card(c, format=format) for c in cards]
+    return ''.join(tags)
 
 
 def card_attr_line(card_input, attrs):
@@ -70,9 +96,10 @@ def card_attr_line(card_input, attrs):
         set = None
 
     card = get_card(card_name, set=set)
-    card_attrs = [format_attr(get_attr(card, attr)) for attr in attrs]
+    card_attrs = [card_attrs.get_attr_fmt(card, attr) for attr in attrs]
 
     return(join_line(card_attrs))
+
 
 def join_line(line):
     if SEP_TYPE == 'Pipe':
@@ -81,31 +108,3 @@ def join_line(line):
         return('"' + '", "'.join(line) + '"')
     if SEP_TYPE == 'Tab':
         return('\t'.join(line))
-
-
-def strip_supertype(type_line):
-    supertypes = ['Basic', 'Legendary', 'Ongoing', 'Snow', 'World']
-    for type in supertypes:
-        type_line = type_line.replace(type + ' ', '')
-    return(type_line)
-
-
-def get_attr(card, attr):
-    if attr == 'type':
-        type_line = card['type_line']
-        type_line = strip_supertype(type_line)
-        return(type_line.split(' — ')[0].split(' // ')[0])
-    if attr == 'subtypes':
-        if '—' in card['type_line']:
-            return(card['type_line'].split(' — ')[1].split(' // ')[0])
-        else:
-            return('')
-    if attr == 'color_identity_name':
-        return(COLOR_NAME_MAP[format_attr(card['color_identity'])])
-    return(card[attr])
-
-
-def format_attr(attr):
-    if type(attr)== type([]):
-        return(''.join(attr))
-    return(str(attr))

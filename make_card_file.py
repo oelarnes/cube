@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/Users/joel/anaconda3/bin/python
 # make_card_file.py
 
 import scryfall, sys
