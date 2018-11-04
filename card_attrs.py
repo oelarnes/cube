@@ -106,6 +106,13 @@ def format_attr(attr):
     return str(attr)
 
 
+def name_with_image_link(card):
+    name = get_attr(card, 'name')
+    image_link = get_attr(card, 'image_link')
+
+    return '=HYPERLINK("{}","{}")'.format(image_link, name)
+
+
 def get_attr(card, attr):
     if attr == 'type':
         type_line = card['type_line']
@@ -151,6 +158,8 @@ def get_attr(card, attr):
         return sort_order_string([
             get_attr(card, rank_attr) for rank_attr in CUBE_RANK
         ])
+    if attr == 'name_with_image_link':
+        return name_with_image_link(card)
     if attr in card:
         return card[attr]
     return ''

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.6
 # scryfall.py
 
-import requests, time, logging, card_attrs
+import requests, time, logging, card_attrs, scryfall_cache
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -9,9 +9,8 @@ SEP_TYPE = 'Pipe'
 
 API_URL = 'https://api.scryfall.com/cards'
 
-CUBE_ATTRS = ['name', 'color_identity_name', 'type', 'cmc', 'subtypes']
-SET_ATTRS = ['name', 'image_link', 'set_template_sort_order', 'color_identity_name', 'type', 'rarity', 'cmc', 'subtypes', 'power', 'toughness', 'oracle_one_line']
-
+CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes']
+SET_ATTRS = ['name_with_image_link', 'set_template_sort_order', 'color_identity_name', 'type', 'rarity', 'cmc', 'subtypes', 'power', 'toughness', 'oracle_one_line']
 
 def get_attr_name(attr):
     map = {
@@ -34,7 +33,17 @@ def get_card(card_name, exact=True, set=None):
         params['set'] = set
     r = requests.get('{}/named'.format(API_URL), params=params)
     time.sleep(.1) # rate limit by request
-    return(r.json())
+    card = r.json()
+
+    # take some attributes from the front face including name
+    if 'card_faces' in card:
+        front = card['card_faces'][0]
+        if card['layout'] == 'transform':
+            card['name'] = front['name']
+        front.update(card)
+        card = front
+
+    return(card)
 
 
 def form_query(query_params):
@@ -96,9 +105,9 @@ def card_attr_line(card_input, attrs):
         set = None
 
     card = get_card(card_name, set=set)
-    card_attrs = [card_attrs.get_attr_fmt(card, attr) for attr in attrs]
+    card_attr_line = [card_attrs.get_attr_fmt(card, attr) for attr in attrs]
 
-    return(join_line(card_attrs))
+    return(join_line(card_attr_line))
 
 
 def join_line(line):
