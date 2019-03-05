@@ -114,6 +114,14 @@ def name_with_image_link(card):
 
 
 def get_attr(card, attr):
+    # take some attributes from the front face including name
+    if 'card_faces' in card:
+        front = card['card_faces'][0]
+        if card['layout'] == 'transform':
+            card['name'] = front['name']
+        front.update(card)
+        card = front
+
     if attr == 'type':
         type_line = card['type_line']
         type_line = strip_supertype(type_line)

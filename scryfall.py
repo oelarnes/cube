@@ -1,13 +1,11 @@
 #!/usr/bin/env python3.6
 # scryfall.py
 
-import requests, time, logging, card_attrs, scryfall_cache
+import requests, time, logging, card_attrs, pymongo
 
 logging.basicConfig(level=logging.DEBUG)
 
 SEP_TYPE = 'Pipe'
-
-API_URL = 'https://api.scryfall.com/cards'
 
 CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes']
 SET_ATTRS = ['name_with_image_link', 'set_template_sort_order', 'color_identity_name', 'type', 'rarity', 'cmc', 'subtypes', 'power', 'toughness', 'oracle_one_line']
@@ -23,25 +21,18 @@ def get_attr_name(attr):
     return attr.replace('_',' ').title()
 
 
-def get_card(card_name, exact=True, set=None):
-    query_type = 'exact' if exact else 'fuzzy'
+def get_card(card_name, set=None):
+    client = pymongo.MongoClient()
+    cards_en = client.scryfall.cards_en
 
-    params = {
-        query_type: card_name
+    query = {
+        'name': card_name
     }
-    if set is not None:
-        params['set'] = set
-    r = requests.get('{}/named'.format(API_URL), params=params)
-    time.sleep(.1) # rate limit by request
-    card = r.json()
 
-    # take some attributes from the front face including name
-    if 'card_faces' in card:
-        front = card['card_faces'][0]
-        if card['layout'] == 'transform':
-            card['name'] = front['name']
-        front.update(card)
-        card = front
+    if set is not None:
+        query['set'] = set
+
+    card = cards_en.find_one(query, sort=[('released_on', pymongo.ASCENDING)])
 
     return(card)
 
@@ -61,16 +52,6 @@ def get_set(set_code, additional_params={}, order='set'):
     query_params.update(additional_params)
 
     query = form_query(query_params)
-    params = {
-        'order': order,
-        'q': query
-    }
-
-    params_str = '&'.join([
-        '{}={}'.format(it[0], it[1]) for it in params.items()
-    ])
-
-    url = '{}/search'.format(API_URL)
 
     has_more=True
     cards = []
