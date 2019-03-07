@@ -24,7 +24,7 @@ def get_card(card_name, set=None):
     cards_en = client.scryfall.cards_en
 
     query = {
-        'name': card_name.strip()
+        'name': card_name
     }
 
     if set is not None:
@@ -36,7 +36,7 @@ def get_card(card_name, set=None):
         query = {
             'card_faces': {
                 '$elemMatch': {
-                    'name': card_name.strip()
+                    'name': card_name
                 }
             }
         }
@@ -96,7 +96,7 @@ def set_images(set_code, format='normal'):
 
 def card_attr_line(card_input, attrs):
     split = card_input.strip('\n').split('|')
-    card_name = split[0]
+    card_name = split[0].strip()
 
     if len(split) >= 2:
         set = split[1]
