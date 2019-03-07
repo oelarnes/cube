@@ -3,8 +3,6 @@
 
 import requests, time, logging, card_attrs, pymongo
 
-logging.basicConfig(level=logging.DEBUG)
-
 SEP_TYPE = 'Pipe'
 
 CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes']
@@ -26,13 +24,32 @@ def get_card(card_name, set=None):
     cards_en = client.scryfall.cards_en
 
     query = {
-        'name': card_name
+        'name': card_name.strip()
     }
 
     if set is not None:
         query['set'] = set
 
     card = cards_en.find_one(query, sort=[('released_on', pymongo.ASCENDING)])
+
+    if card is None:
+        query = {
+            'card_faces': {
+                '$elemMatch': {
+                    'name': card_name.strip()
+                }
+            }
+        }
+        if set is not None:
+            query['set'] = set
+
+        card = cards_en.find_one(query, sort=[('released_on', pymongo.ASCENDING)])
+
+    if card is None:
+        error_message = 'No match for card name {}'.format(card_name)
+        if set is not None:
+            error_message = error_message + ' and set {}'.format(set)
+        logging.error(error_message)
 
     return(card)
 
@@ -80,13 +97,17 @@ def set_images(set_code, format='normal'):
 def card_attr_line(card_input, attrs):
     split = card_input.strip('\n').split('|')
     card_name = split[0]
+
     if len(split) >= 2:
         set = split[1]
     else:
         set = None
 
     card = get_card(card_name, set=set)
-    card_attr_line = [card_attrs.get_attr_fmt(card, attr) for attr in attrs]
+    if card is None:
+        card_attr_line = [card_name if (attr == 'name') else '' for attr in attrs]
+    else:
+        card_attr_line = [card_attrs.get_attr_fmt(card, attr) for attr in attrs]
 
     return(join_line(card_attr_line))
 

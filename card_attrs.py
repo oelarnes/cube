@@ -132,7 +132,10 @@ def get_attr(card, attr):
         else:
             return ''
     if attr == 'color_identity_name':
-        return COLOR_NAME_MAP[format_attr(card['color_identity'])]
+        col_id = format_attr(card['color_identity'])
+        if col_id in COLOR_NAME_MAP:
+            return COLOR_NAME_MAP[format_attr(card['color_identity'])]
+        return col_id
     if attr == 'image_tag':
         return image_tag_from_card(card)
     if attr == 'image_formula':

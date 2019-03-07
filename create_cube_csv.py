@@ -1,7 +1,9 @@
 #!/Users/joel/anaconda3/bin/python
 # create_cube_csv.py
 
-import scryfall, sys
+import scryfall, sys, logging
+
+logging.basicConfig(filename='cube_csv.log',level=logging.WARNING)
 
 attrs = sys.argv if len(sys.argv[1:]) else scryfall.CUBE_ATTRS
 
