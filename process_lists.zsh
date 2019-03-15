@@ -5,4 +5,4 @@ rm -f cube.csv
 rm -f cube_csv.log
 
 cat ./lists/* | python unique.py > card_ref.txt
-python create_cube_csv.py < card_ref.txt > cube.csv
+python create_cube_csv.py < card_ref.txt > share/cube.csv

@@ -113,11 +113,18 @@ def name_with_image_link(card):
     return '=HYPERLINK("{}","{}")'.format(image_link, name)
 
 
+def mtgo_name(card):
+    if 'card_face' in card and card['layout'] == 'split':
+        names = [card['card_face'][i]['name'] for i in [0,1]]
+        return '/'.join(names)
+    return get_attr(card, 'name')
+
+
 def get_attr(card, attr):
     # take some attributes from the front face including name
     if 'card_faces' in card:
         front = card['card_faces'][0]
-        if card['layout'] == 'transform':
+        if card['layout'] == 'transform' or card['layout'] == 'flip':
             card['name'] = front['name']
         front.update(card)
         card = front
@@ -171,6 +178,8 @@ def get_attr(card, attr):
         ])
     if attr == 'name_with_image_link':
         return name_with_image_link(card)
+    if attr == 'mtgo_name':
+        return mtgo_name(card)
     if attr in card:
         return card[attr]
     return ''
