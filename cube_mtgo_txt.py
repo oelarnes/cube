@@ -2,7 +2,7 @@
 # create_cube_dek.py
 
 from cube_tutor import download_cube_list
-import cube_tutor, scryfall, time, logging
+import scryfall, time, logging
 
 CUBE_ID = 135529
 CUBE_FILENAME = 'ocl_cube.txt'
