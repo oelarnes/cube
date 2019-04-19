@@ -24,7 +24,7 @@ def fetch_cards(lang='en'):
         data.extend(cards['data'])
 
     if len(lang):
-        data = [card for card in data where card['lang'] == lang]
+        data = [card for card in data if card['lang'] == lang]
 
     return data
 

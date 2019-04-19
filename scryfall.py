@@ -1,10 +1,12 @@
 #!/usr/bin/env python3.6
 # scryfall.py
+# usage: python scryfall.py WAR > war.csv
 
 import requests, time, logging, card_attrs, pymongo
 
 SEP_TYPE = 'Pipe'
 
+API_URL = 'https://api.scryfall.com/cards'
 CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes']
 SET_ATTRS = ['name_with_image_link', 'set_template_sort_order', 'color_identity_name', 'type', 'rarity', 'cmc', 'subtypes', 'power', 'toughness', 'oracle_one_line']
 
@@ -67,14 +69,15 @@ def get_set(set_code, additional_params={}, order='set'):
     }
 
     query_params.update(additional_params)
-
-    query = form_query(query_params)
+    query= form_query(query_params)
+    params = {'q': query}
 
     has_more=True
     cards = []
+    url = '{}/search'.format(API_URL)
 
     while has_more:
-        r = requests.get(url, params=params_str)
+        r = requests.get(url, params=params)
         time.sleep(.1)
         response = r.json()
         cards.extend(response['data'])
