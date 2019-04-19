@@ -1,0 +1,8 @@
+pics
+lists
+*.csv
+*.txt
+__pycache__
+*.log
+.DS_Store
+share
