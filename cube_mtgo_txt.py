@@ -1,15 +1,15 @@
 #!/Users/joel/anaconda3/bin/python
-# create_cube_dek.py
+# create_cube_dec.py
 
 from cube_tutor import download_cube_list
 import scryfall, time, logging
 
 CUBE_ID = 135529
 CUBE_FILENAME = 'ocl_cube.txt'
-DEK_FILENAME = 'ocl_cube.dek'
+DEC_FILENAME = 'ocl_cube.dec'
 DIR = './share'
 
-logging.basicConfig(filename='cube_dek.log',level=logging.WARNING)
+logging.basicConfig(filename='cube_dec.log',level=logging.WARNING)
 
 download_cube_list(CUBE_ID, DIR)
 
@@ -26,6 +26,6 @@ while True:
     logging.warning('Not finished downloading. Downloaded {} cards.'.format(len(lines)))
     lines0 = lines
 
-out = open('/'.join([DIR, DEK_FILENAME]), 'w')
+out = open('/'.join([DIR, DEC_FILENAME]), 'w')
 out.writelines(['1 {}\n'.format(scryfall.card_attr_line(line, ['mtgo_name'])) for line in lines])
 out.close()
