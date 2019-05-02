@@ -5,22 +5,22 @@ import os
 import time
 import scryfall
 
-logging.basicConfig(filename='ref_list_gen.log',level=logging.WARNING)
+logging.basicConfig(filename='logs/ref_list_gen.log',level=logging.WARNING)
 
 DIR = './lists'
 REF_LISTS = {
     64141: 'joels_cube.txt',
-    134850: 'jamess_cube.txt',
+    135529: "ocl_cube.txt",
+    14381: 'hypercube.txt',
     5936: 'mtgo_vintage_cube*',
     64542: 'ryans_cube.txt',
     170: 'wtwlf123s_cube.txt',
     127541: 'usmans_cube.txt',
     56212: 'aarons_450_cube.txt',
     58025: 'andys_sweet_synergy_540.txt',
-    804: 'rasgueos_cube.txt',
     3710: 'simple_mans_450_powered.txt'
 }
-OUT_FILE = 'ref_lists.csv'
+OUT_FILE = 'cache/ref_lists.csv'
 
 lists = []
 
@@ -43,20 +43,19 @@ for id, filename in REF_LISTS.items():
             'Download id {} failed to produce expected filename {}.'.format(id, filename)
         )
 
-    else:
-        f = open(fn)
-        lines0 = f.readlines()
-        while True:
-            time.sleep(5)
-            f.seek(0)
-            lines = f.readlines()
-            if lines == lines0:
-                break
-            logging.warning('Not finished downloading. Downloaded {} cards.'.format(len(lines)))
-            lines0 = lines
-        lines = [scryfall.card_attr_line(line, ['name']) for line in lines]
-        lines.insert(0, filename.split('.')[0])
-        lists.append(lines)
+    f = open(fn)
+    lines0 = f.readlines()
+    while True:
+        time.sleep(5)
+        f.seek(0)
+        lines = f.readlines()
+        if lines == lines0:
+            break
+        logging.warning('Not finished downloading. Downloaded {} cards.'.format(len(lines)))
+        lines0 = lines
+    lines = [scryfall.card_attr_line(line, ['name']) for line in lines]
+    lines.insert(0, filename.split('.')[0])
+    lists.append(lines)
 
 
 try:

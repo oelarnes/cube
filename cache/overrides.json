@@ -1,0 +1,58 @@
+{
+    "attrs": {
+        "Polluted Delta": {
+            "color_identity": "BU"
+        },
+        "Flooded Strand": {
+            "color_identity": "UW"
+        },
+        "Bloodstained Mire": {
+            "color_identity": "BR"
+        },
+        "Wooded Foothills": {
+            "color_identifty": "GR"
+        },
+        "Windswept Heath": {
+            "color_identity": "GW"
+        },
+        "Arid Mesa": {
+            "color_identity": "RW"
+        },
+        "Scalding Tarn": {
+            "color_identity": "RU"
+        },
+        "Misty Rainforest": {
+            "color_identity": "GU"
+        },
+        "Verdant Catacombs": {
+            "color_identity": "BG"
+        },
+        "Marsh Flats": {
+            "color_identity": "BW"
+        },
+        "Committ // Memory": {
+            "cmc": 4
+        },
+        "Grasslands": {
+            "color_identity": "GW"
+        },
+        "Mountain Valley": {
+            "color_identity": "GR"
+        },
+        "Bad River": {
+            "color_identity": "BU"
+        },
+        "Rocky Tar Pit": {
+            "color_identity": "BR"
+        },
+        "Vedalken Shackles": {
+            "color_identity": "U"
+        },
+        "Shrine of Burning Rage": {
+            "color_identity": "R"
+        }
+    },
+    "names": {
+        "Lim-Dul's Vault": "Lim-Dûl's Vault"
+    }
+}

@@ -3,11 +3,12 @@
 # usage: python scryfall.py WAR > war.csv
 
 import requests, time, logging, card_attrs, pymongo
+from card_attrs import get_overrides
 
 SEP_TYPE = 'Pipe'
 
 API_URL = 'https://api.scryfall.com/cards'
-CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes']
+CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes', 'cube_sort_order']
 SET_ATTRS = ['name_with_image_link', 'set_template_sort_order', 'color_identity_name', 'type', 'rarity', 'cmc', 'subtypes', 'power', 'toughness', 'oracle_one_line']
 
 def get_attr_name(attr):
@@ -24,6 +25,9 @@ def get_attr_name(attr):
 def get_card(card_name, set=None):
     client = pymongo.MongoClient()
     cards_en = client.scryfall.cards_en
+
+    overrides = get_overrides()
+    card_name = overrides['names'].get(card_name, card_name)
 
     query = {
         'name': card_name

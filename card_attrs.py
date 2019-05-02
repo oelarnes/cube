@@ -1,4 +1,6 @@
 import re
+import json
+from functools import lru_cache
 
 COLOR_NAME_MAP = {
     "W":    "White",
@@ -54,6 +56,12 @@ TYPE_ORDER = [
 
 SET_TEMPLATE_RANK = ['rarity_rank', 'color_identity_rank', 'type_rank', 'cmc', 'name']
 CUBE_RANK = ['color_identity_rank', 'type_rank', 'cmc', 'name']
+
+@lru_cache(maxsize=1)
+def get_overrides():
+    with open('cache/overrides.json') as overrides:
+        return json.load(overrides)
+
 
 def sort_order_string(rank_list):
     # if string, keep as is. if double, convert to 2 digit string, if
@@ -121,6 +129,10 @@ def mtgo_name(card):
 
 
 def get_attr(card, attr):
+    overrides = get_overrides()['attrs']
+    if attr != 'name' and attr in overrides.get(get_attr(card, 'name'), {}):
+        return overrides[get_attr(card, 'name')][attr]
+
     # take some attributes from the front face including name
     if 'card_faces' in card:
         front = card['card_faces'][0]
@@ -139,9 +151,9 @@ def get_attr(card, attr):
         else:
             return ''
     if attr == 'color_identity_name':
-        col_id = format_attr(card['color_identity'])
+        col_id = format_attr(get_attr(card, 'color_identity'))
         if col_id in COLOR_NAME_MAP:
-            return COLOR_NAME_MAP[format_attr(card['color_identity'])]
+            return COLOR_NAME_MAP[format_attr(get_attr(card, 'color_identity'))]
         return col_id
     if attr == 'image_tag':
         return image_tag_from_card(card)

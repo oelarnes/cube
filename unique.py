@@ -2,8 +2,9 @@
 # unique.py
 
 import sys
-s = {}
+s = {'\n'}
 for line in sys.stdin:
+  line = line.lstrip().rstrip() + '\n'
   if line not in s:
     sys.stdout.write(line)
-    s[line]=1
+    s.add(line)
