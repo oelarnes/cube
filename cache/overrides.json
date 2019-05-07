@@ -1,5 +1,11 @@
 {
     "attrs": {
+        "Greater Gargadon": {
+            "cmc": 1
+        },
+        "Archangel Avacyn": {
+            "color_identity": "W"
+        },
         "Polluted Delta": {
             "color_identity": "BU"
         },
@@ -10,7 +16,7 @@
             "color_identity": "BR"
         },
         "Wooded Foothills": {
-            "color_identifty": "GR"
+            "color_identity": "GR"
         },
         "Windswept Heath": {
             "color_identity": "GW"
@@ -30,7 +36,13 @@
         "Marsh Flats": {
             "color_identity": "BW"
         },
-        "Committ // Memory": {
+        "Commit // Memory": {
+            "cmc": 4
+        },
+        "Depose // Deploy": {
+            "cmc": 4
+        },
+        "Connive // Concoct": {
             "cmc": 4
         },
         "Grasslands": {
@@ -45,11 +57,32 @@
         "Rocky Tar Pit": {
             "color_identity": "BR"
         },
+        "Flood Plain": {
+            "color_identity": "UW"
+        },
         "Vedalken Shackles": {
             "color_identity": "U"
         },
         "Shrine of Burning Rage": {
             "color_identity": "R"
+        },
+        "Loam Lion": {
+            "color_identity": "GW"
+        },
+        "Kird Ape": {
+            "color_identity": "GR"
+        },
+        "Garruk Relentless": {
+            "color_identity": "G"
+        },
+        "Status // Statue": {
+            "cmc": 4
+        },
+        "Fire // Ice": {
+            "cmc": 2
+        },
+        "Urborg, Tomb of Yawgmoth": {
+            "color_identity": "B"
         }
     },
     "names": {

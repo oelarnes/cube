@@ -9,7 +9,7 @@ from selenium.webdriver.chrome.options import Options
 
 
 # install chromedriver with homebrew or what have you and place the path to the executable here
-CHROMEDRIVER_PATH = "/usr/local/bin/chromedriver"
+CHROMEDRIVER_PATH = "/Users/joel/Projects/cube/chromedriver"
 
 
 def view_cube_url(cube_id: int) -> str:

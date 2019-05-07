@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-# python ref_list_gen.py
+python ref_list_gen.py
 
 rm -f cache/card_ref.txt
 rm -f cache/cube.csv
@@ -13,6 +13,8 @@ rm -f cache/cubes_raw.txt
 rm -f cache/cubes_all.txt
 
 cat ./lists/* cache/always_include.txt cache/old_cubes.txt > cache/all_cards.txt
+# cat ./lists/* > cache/all_cards.txt
+
 python unique.py < cache/all_cards.txt > cache/card_list.txt
 python create_cube_csv.py < cache/card_list.txt > cache/card_reference.csv
 
