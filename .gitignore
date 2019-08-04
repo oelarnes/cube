@@ -8,3 +8,8 @@ __pycache__
 share
 chromedriver
 *.pyc
+cache/
+cache_public_medium/
+venv/
+.vscode/
+logs

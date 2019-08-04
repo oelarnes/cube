@@ -1,12 +1,14 @@
-import requests
 import time
+
+import requests
 import pymongo
 
 API_URL = 'https://api.scryfall.com/cards'
 
 def clear_cache():
     client = pymongo.MongoClient()
-    client.scryfall.cards_en.delete_many({})
+    deleted = client.scryfall.cards_en.delete_many({})
+    print(deleted.deleted_count, ' cards deleted')
 
 def fetch_cards(lang='en'):
     clear_cache()
@@ -21,6 +23,7 @@ def fetch_cards(lang='en'):
         cards = r.json()
         has_more = cards['has_more']
         next_page = cards['next_page']
+        print('importing {}'.format(len(cards['data'])))
         data.extend(cards['data'])
 
     if len(lang):

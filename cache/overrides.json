@@ -3,6 +3,12 @@
         "Greater Gargadon": {
             "cmc": 1
         },
+        "Ancestral Vision": {
+            "cmc": 1
+        },
+        "Crashing Footfalls": {
+            "cmc": 1
+        },
         "Archangel Avacyn": {
             "color_identity": "W"
         },
@@ -83,6 +89,27 @@
         },
         "Urborg, Tomb of Yawgmoth": {
             "color_identity": "B"
+        },
+        "Never // Return": {
+            "cmc": 3
+        },
+        "Insult // Injury": {
+            "cmc": 3
+        },
+        "Discover // Dispersal": {
+            "cmc": 2
+        },
+        "Thrash // Threat": {
+            "cmc": 4
+        },
+        "Life // Death": {
+            "cmc": 2
+        },
+        "Expansion // Explosion": {
+            "cmc": 2
+        },
+        "Wear // Tear": {
+            "cmc": 2
         }
     },
     "names": {

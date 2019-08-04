@@ -1,93 +1,132 @@
-from cube_tutor import download_cube_list
 import logging
 import fnmatch
 import os
 import time
-import scryfall
+import sys
+import json
 from datetime import date
+
+from cube_tutor import download_cube_list
+import scryfall
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+ENV = 'joel' if not sys.argv[:1] else sys.argv[1]
+
+with open('cube_config.json') as config_file:
+    config = json.load(config_file)[ENV]
+
+CACHE_DIR = config['cache_dir']
+LISTS = config['lists']
 
 logging.basicConfig(filename='logs/ref_list_gen.log',level=logging.WARNING)
 
-DIR = './lists'
-REF_LISTS = {
-    64141: 'joels_cube.txt',
-    135529: "ocl_cube.txt",
-    14381: 'hypercube.txt',
-    5936: 'mtgo_vintage_cube*',
-    64542: 'ryans_cube.txt',
-    170: 'wtwlf123s_cube.txt',
-    127541: 'usmans_cube.txt',
-    56212: 'aarons_450_cube.txt',
-    58025: 'andys_sweet_synergy.txt',
-    3710: 'simple_mans_450_powered.txt'
-}
-OUT_FILE = 'cache/ref_lists.csv'
+ENV_DIR = f'{ROOT_DIR}/{CACHE_DIR}'
+LIST_DIR = f'{ENV_DIR}/lists'
 
-lists = []
+OUT_FILE = f'{ENV_DIR}/ref_lists.csv'
+
+REF_LIST_MAP = {
+    64141: {
+        'path_regex': 'joels_cube*',
+        'name': "Joel's Cube"
+    },
+    135529: {
+        'path_regex': "ocl_cube*",
+        'name': "OCL Cube"
+    },
+    14381: {
+        'path_regex': 'hypercube*',
+        'name': 'Hypercube'
+    },
+    5936: {
+        'path_regex': 'mtgo_vintage_cube*',
+        'name': 'MTGO Vintage Cube'
+    },
+    64542: {
+        'path_regex': 'ryans_cube*',
+        'name': "Ryan's Cube"
+    },
+    170: {
+        'path_regex': 'wtwlf123s_cube*',
+        'name': "wtwlf123's Cube"
+    },
+    127541: {
+        'path_regex': 'usmans_cube*',
+        'name': "Usman's Cube"
+    },
+    56212: {
+        'path_regex': 'aarons_450_cube*',
+        'name': "Aaron's 450 Cube"
+    },
+    58025: {
+        'path_regex': 'andys_sweet_synergy*',
+        'name': "Andy's Sweet Synergy"
+    },
+    3710: {
+        'path_regex': 'simple_mans_450_powered*',
+        'name': "Simple Man's 450 Powered"
+    }
+}
 
 def get_file_match(filename):
-    for file in os.listdir(DIR):
+    for file in os.listdir(LIST_DIR):
         if fnmatch.fnmatch(file, filename):
-            return DIR + '/' + file
+            return LIST_DIR + '/' + file
 
-def cube_name(id):
-    names = {
-        64141: "Joel's Cube",
-        135529: "OCL Cube",
-        14381: 'Hypercube',
-        5936: 'MTGO Vintage Cube',
-        64542: "Ryan's Cube",
-        170: "wtwlf123's Cube",
-        127541: "Usman's Cube",
-        56212: "Aaron's 450 Cube",
-        58025: "Andy's Sweet Synergy",
-        3710: "Simple Man's 450 Powered",
-    }
 
-    link = 'https://www.cubetutor.com/viewcube/{}'.format(id)
+def cube_name(cube_id, date_str):
+    link = 'https://www.cubetutor.com/viewcube/{}'.format(cube_id)
+    return '=HYPERLINK("{}","{} {}")'.format(link, REF_LIST_MAP[cube_id]['name'], date_str)
 
+
+def main():
+    lists = []
     date_str = date.today().strftime('%d%b%y')
-    return '=HYPERLINK("{}","{} {} {}")'.format(link, names[id], id, date_str)
 
-for id, filename in REF_LISTS.items():
-    fn = get_file_match(filename)
-    if fn is not None:
-        os.remove(fn)
+    for cube_id in LISTS:
+        filename = REF_LIST_MAP[cube_id]['path_regex']
 
-    download_cube_list(id, DIR)
-    time.sleep(1)
-    fn = get_file_match(filename)
-    if fn is None:
-        logging.warning(
-            'Download id {} failed to produce expected filename {}.'.format(id, filename)
+        fn = get_file_match(filename)
+        if fn is not None:
+            os.remove(fn)
+
+        download_cube_list(cube_id, LIST_DIR)
+        time.sleep(1)
+        fn = get_file_match(filename)
+        if fn is None:
+            logging.warning(
+                'Download id {} failed to produce expected filename {}.'.format(cube_id, filename)
+            )
+
+        with open(fn) as f:
+            lines0 = f.readlines()
+            while True:
+                time.sleep(5)
+                f.seek(0)
+                lines = f.readlines()
+                if lines == lines0:
+                    break
+                logging.warning('Not finished downloading. Downloaded {} cards.'.format(len(lines)))
+                lines0 = lines
+            lines = [scryfall.card_attr_line(line, ['name']) for line in lines]
+            lines.insert(0, cube_name(cube_id, date_str))
+            lists.append(lines)
+
+        logging.info(
+            f'{cube_name(cube_id, date_str)} downloaded as {filename}'
         )
 
-    f = open(fn)
-    lines0 = f.readlines()
-    while True:
-        time.sleep(5)
-        f.seek(0)
-        lines = f.readlines()
-        if lines == lines0:
-            break
-        logging.warning('Not finished downloading. Downloaded {} cards.'.format(len(lines)))
-        lines0 = lines
-    lines = [scryfall.card_attr_line(line, ['name']) for line in lines]
-    lines.insert(0, cube_name(id))
-    lists.append(lines)
+    try:
+        os.remove(OUT_FILE)
+    except OSError:
+        pass
 
+    with open(OUT_FILE, 'a') as write_file:
+        k = max([len(list_) for list_ in lists])
 
-try:
-    os.remove(OUT_FILE)
-except OSError:
-    pass
+        for i in range(k):
+            row = [list_[i] if len(list_) > i else '' for list_ in lists]
+            write_file.write('|'.join(row)+'\n')
 
-write_file = open(OUT_FILE, 'a')
-
-k = max([len(list) for list in lists])
-
-for i in range(k):
-    row = [list[i] if len(list) > i else '' for list in lists]
-    write_file.write('|'.join(row)+'\n')
-
-write_file.close()
+if __name__ == '__main__':
+    main()

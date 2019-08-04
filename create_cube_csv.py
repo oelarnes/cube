@@ -2,7 +2,7 @@
 # create_cube_csv.py
 
 # populate card_ref.txt with unique list of cards, then
-# usage 'python create_cube_csv.py < card_ref.txt > share/cube.csv'
+# usage 'python create_cube_csv.py < card_ref.txt > cache/cube.csv'
 
 import scryfall, sys, logging
 

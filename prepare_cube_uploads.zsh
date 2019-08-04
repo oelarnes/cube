@@ -1,22 +1,31 @@
 #!/usr/bin/env zsh
+if [ "$1" != '' ]; then
+    CUBE_ENV=$1
+fi
 
-python ref_list_gen.py
+if [ "$CUBE_ENV" = '' ]; then
+    CUBE_ENV=joel
+fi
 
-rm -f cache/card_ref.txt
-rm -f cache/cube.csv
-rm -f cache/cube_csv.log
+CACHE_DIR=$(jq -r .$CUBE_ENV.cache_dir < cube_config.json)
 
-tr '\t' '\n' < cache/cubes_raw.txt > cache/cubes_all.txt
-python unique.py < cache/cubes_all.txt > cache/old_cubes.txt
+python ref_list_gen.py $CUBE_ENV
 
-rm -f cache/cubes_raw.txt
-rm -f cache/cubes_all.txt
+rm -f $CACHE_DIR/card_ref.txt
+rm -f $CACHE_DIR/cube.csv
+rm -f $CACHE_DIR/cube_csv.log
 
-cat ./lists/* cache/always_include.txt cache/old_cubes.txt > cache/all_cards.txt
-# cat ./lists/* > cache/all_cards.txt
+tr '\t' '\n' < $CACHE_DIR/cubes_raw.txt > $CACHE_DIR/cubes_all.txt
+python unique.py < $CACHE_DIR/cubes_all.txt > $CACHE_DIR/old_cubes.txt
 
-python unique.py < cache/all_cards.txt > cache/card_list.txt
-python create_cube_csv.py < cache/card_list.txt > cache/card_reference.csv
+rm -f $CACHE_DIR/cubes_raw.txt
+rm -f $CACHE_DIR/cubes_all.txt
 
-rm -f cache/all_cards.txt
-rm -f cache/card_list.txt
+cat $CACHE_DIR/lists/* $CACHE_DIR/always_include.txt $CACHE_DIR/old_cubes.txt > $CACHE_DIR/all_cards.txt
+# cat ./lists/* > $CACHE_DIR/all_cards.txt
+
+python unique.py < $CACHE_DIR/all_cards.txt > $CACHE_DIR/card_list.txt
+python create_cube_csv.py < $CACHE_DIR/card_list.txt > $CACHE_DIR/card_reference.csv
+
+rm -f $CACHE_DIR/all_cards.txt
+rm -f $CACHE_DIR/card_list.txt
