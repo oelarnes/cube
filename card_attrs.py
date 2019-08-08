@@ -85,7 +85,7 @@ def image_formula_from_card(card, format='normal'):
 
 def clean_oracle_text(text):
     text = text.replace('\n', '; ')
-    reminder_text_re = '\(.*?\)'
+    reminder_text_re = r'\(.*?\)'
     return re.sub(reminder_text_re, '', text)
 
 

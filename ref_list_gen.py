@@ -97,6 +97,7 @@ def main():
             logging.warning(
                 'Download id {} failed to produce expected filename {}.'.format(cube_id, filename)
             )
+            continue
 
         with open(fn) as f:
             lines0 = f.readlines()
@@ -113,7 +114,7 @@ def main():
             lists.append(lines)
 
         logging.info(
-            f'{cube_name(cube_id, date_str)} downloaded as {filename}'
+            f'{cube_id} downloaded as {filename}'
         )
 
     try:
