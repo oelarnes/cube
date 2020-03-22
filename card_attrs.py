@@ -122,21 +122,22 @@ def name_with_image_link(card):
 
 
 def mtgo_name(card):
-    if 'card_face' in card and card['layout'] == 'split':
-        names = [card['card_face'][i]['name'] for i in [0,1]]
+    if 'card_faces' in card and card['layout'] == 'split':
+        names = [card['card_faces'][i]['name'] for i in [0,1]]
         return '/'.join(names)
     return get_attr(card, 'name')
 
 
 def get_attr(card, attr):
+    card = dict(card)
     overrides = get_overrides()['attrs']
     if attr != 'name' and attr in overrides.get(get_attr(card, 'name'), {}):
         return overrides[get_attr(card, 'name')][attr]
 
     # take some attributes from the front face including name
     if 'card_faces' in card:
-        front = card['card_faces'][0]
-        if card['layout'] == 'transform' or card['layout'] == 'flip':
+        front = dict(card['card_faces'][0])
+        if card['layout'] in ('transform', 'flip', 'adventure'):
             card['name'] = front['name']
         front.update(card)
         card = front

@@ -16,18 +16,16 @@ def fetch_cards(lang='en'):
 
     next_page = API_URL
     has_more = True
-
+    
     while has_more:
         r = requests.get(next_page)
         time.sleep(.1) # rate limit by request
         cards = r.json()
         has_more = cards['has_more']
         next_page = cards['next_page']
-        print('importing {}'.format(len(cards['data'])))
-        data.extend(cards['data'])
 
-    if len(lang):
-        data = [card for card in data if card['lang'] == lang]
+        data.extend([card for card in cards['data'] if not lang or card['lang'] == lang])
+        print('{} pulled'.format(len(data)))
 
     return data
 
@@ -38,4 +36,4 @@ def populate_cache():
     client = pymongo.MongoClient()
     client.scryfall.cards_en.insert_many(cards)
 
-    print('{} cards inserted', client.scryfall.cards_en.count_documents({}))
+    print(f'{client.scryfall.cards_en.count_documents({})} cards inserted')

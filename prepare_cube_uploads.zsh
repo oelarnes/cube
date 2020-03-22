@@ -19,12 +19,13 @@ tr '\t' '\n' < $CACHE_DIR/cubes_raw.txt > $CACHE_DIR/cubes_all.txt
 python unique.py < $CACHE_DIR/cubes_all.txt > $CACHE_DIR/old_cubes.txt
 
 cat $CACHE_DIR/lists/* $CACHE_DIR/always_include.txt $CACHE_DIR/old_cubes.txt > $CACHE_DIR/all_cards.txt
-# cat ./lists/* > $CACHE_DIR/all_cards.txt
 
 python unique.py < $CACHE_DIR/all_cards.txt > $CACHE_DIR/card_list.txt
-python create_cube_csv.py < $CACHE_DIR/card_list.txt > $CACHE_DIR/card_reference.csv
+python create_cube_csv.py < $CACHE_DIR/card_list.txt > $CACHE_DIR/card_reference_tmp.csv
+python unique.py < $CACHE_DIR/card_reference_tmp.csv > $CACHE_DIR/card_reference.csv
 
 rm -f $CACHE_DIR/all_cards.txt
 rm -f $CACHE_DIR/card_list.txt
 rm -f $CACHE_DIR/old_cubes.txt
 rm -f $CACHE_DIR/cubes_all.txt
+rm -f $CACHE_DIR/card_reference_tmp.csv

@@ -1,17 +1,17 @@
 #!/Users/joel/anaconda3/bin/python
 # create_cube_dec.py
 
-from cube_tutor import download_cube_list
+from cube_lists import download_cube_list
 import scryfall, time, logging
 
-CUBE_ID = 135529
+CUBE_ID = 'ocl'
 CUBE_FILENAME = 'ocl_cube.txt'
 DEC_FILENAME = 'ocl_cube.dec'
 DIR = './share'
 
 logging.basicConfig(filename='cube_dec.log',level=logging.WARNING)
 
-download_cube_list(CUBE_ID, DIR)
+download_cube_list(CUBE_ID, DIR, source='cubecobra')
 
 f = open('/'.join([DIR, CUBE_FILENAME]))
 

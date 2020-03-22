@@ -22,6 +22,26 @@ def get_attr_name(attr):
     return attr.replace('_',' ').title()
 
 
+def get_card_by_id(mtgo_id):
+    client = pymongo.MongoClient()
+    cards_en = client.scryfall.cards_en
+
+    query = {
+        '$or': [
+            {'mtgo_id': int(mtgo_id)},
+            {'mtgo_foil_id': int(mtgo_id)}
+        ]
+    }
+
+    card = cards_en.find_one(query)
+
+    if card is None:
+        error_message = 'No match for card id {}'.format(mtgo_id)
+        logging.error(error_message)
+
+    return card
+
+
 def get_card(card_name, set=None):
     client = pymongo.MongoClient()
     cards_en = client.scryfall.cards_en

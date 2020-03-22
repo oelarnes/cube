@@ -2,31 +2,34 @@
     "joel": {
         "cache_dir": "cache",
         "lists" : [
-            64141,
-            135529,
             14381,
-            5936, 
+            "modovintage", 
             64542, 
             170,
             127541,
             56212,
             58025,
-            3710
+            "450_powered",
+            "ocl",
+            "joel",
+            "oclmaster"
         ]
     },
     "ocl": {
         "cache_dir": "cache_ocl",
         "lists": [
-            64141,
-            135529,
             14381,
-            5936, 
+            "modovintage", 
             64542, 
             170,
             127541,
             56212,
             58025,
-            3710
+            "450_powered",
+            "joel",
+            "ocli",
+            "oclp",
+            "oclmaster"
         ]
     }
 }
