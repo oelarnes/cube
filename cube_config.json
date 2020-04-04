@@ -2,15 +2,17 @@
     "joel": {
         "cache_dir": "cache",
         "lists" : [
-            14381,
+            "dekkaru",
             "modovintage", 
-            64542, 
-            170,
-            127541,
-            56212,
-            58025,
+            "ryan", 
+            "wtwlf123",
+            "scgconcube",
+            "culticcube",
             "450_powered",
-            "ocl",
+            "unpowered_fair_stuff",
+            "powered_unfair_stuff",
+            "1001",
+            "oclp",
             "joel",
             "oclmaster"
         ]
@@ -18,18 +20,21 @@
     "ocl": {
         "cache_dir": "cache_ocl",
         "lists": [
-            14381,
+            "dekkaru",
             "modovintage", 
-            64542, 
-            170,
-            127541,
-            56212,
-            58025,
+            "ryan", 
+            "wtwlf123",
+            "scgconcube",
+            "culticcube",
             "450_powered",
+            "unpowered_fair_stuff",
+            "powered_unfair_stuff",
+            "1001",
             "joel",
             "ocli",
             "oclp",
-            "oclmaster"
+            "oclmaster",
+            "oclcollection"
         ]
     }
 }

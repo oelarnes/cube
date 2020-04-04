@@ -11,7 +11,6 @@ def clear_cache():
     print(deleted.deleted_count, ' cards deleted')
 
 def fetch_cards(lang='en'):
-    clear_cache()
     data = []
 
     next_page = API_URL
@@ -37,3 +36,7 @@ def populate_cache():
     client.scryfall.cards_en.insert_many(cards)
 
     print(f'{client.scryfall.cards_en.count_documents({})} cards inserted')
+
+
+if __name__ == '__main__':
+    populate_cache()

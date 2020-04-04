@@ -9,6 +9,8 @@ fi
 
 CACHE_DIR=$(jq -r .$CUBE_ENV.cache_dir < cube_config.json)
 
+python scryfall_cache.py
+
 python ref_list_gen.py $CUBE_ENV
 
 rm -f $CACHE_DIR/card_ref.txt

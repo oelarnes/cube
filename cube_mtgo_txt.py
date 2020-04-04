@@ -9,9 +9,9 @@ CUBE_FILENAME = 'ocl_cube.txt'
 DEC_FILENAME = 'ocl_cube.dec'
 DIR = './share'
 
-logging.basicConfig(filename='cube_dec.log',level=logging.WARNING)
+logging.basicConfig(filename='cube_dec.log', level=logging.WARNING)
 
-download_cube_list(CUBE_ID, DIR, source='cubecobra')
+download_cube_list(CUBE_ID, DIR)
 
 f = open('/'.join([DIR, CUBE_FILENAME]))
 

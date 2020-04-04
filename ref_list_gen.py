@@ -6,7 +6,7 @@ import sys
 import json
 from datetime import date
 
-from cube_lists import download_cube_list, COBRA, TUTOR
+from cube_lists import download_cube_list
 import scryfall
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -28,68 +28,67 @@ OUT_FILE = f'{ENV_DIR}/ref_lists.csv'
 REF_LIST_MAP = {
     'ocl': {
         'path_regex': 'OCLCube*',
-        'name': 'OCL Cube',
-        'source': COBRA
+        'name': 'OCL Cube'
     },
     'ocli': {
         'path_regex': 'OCLInteractiveCube*',
-        'name': 'OCL Interactive Cube',
-        'source': COBRA
+        'name': 'OCL Interactive Cube'
     },
     'oclp': {
         'path_regex': 'OCLPoweredCube*',
-        'name': 'OCL Powered Cube',
-        'source': COBRA
+        'name': 'OCL Powered Cube'
     },
     'oclmaster': {
         'path_regex': 'CubeMaster*',
         'name': 'Joel\'s Cube Master',
-        'source': COBRA
+    },
+    'oclcollection': {
+        'path_regex': 'OCLOwned*',
+        'name': 'OCL Owned Cards'
     },
     'joel': {
         'path_regex': 'JoelsCube*',
         'name': "Joel's Cube",
-        'source': COBRA
-    },
-    14381: {
-        'path_regex': 'hypercube*',
-        'name': 'Hypercube',
-        'source': TUTOR,
     },
     'modovintage': {
         'path_regex': 'ModoVintageCube*',
-        'name': 'MTGO Vintage Cube',
-        'source': COBRA
+        'name': 'MTGO Vintage Cube'
     },
-    64542: {
-        'path_regex': 'ryans_cube*',
-        'name': "Ryan's Cube",
-        'source': TUTOR
+    'ryan': {
+        'path_regex': 'RyanSaxe*',
+        'name': "Ryan's Cube"
     },
-    170: {
-        'path_regex': 'wtwlf123s_cube*',
-        'name': "wtwlf123's Cube",
-        'source': TUTOR
-    },
-    127541: {
-        'path_regex': 'usmans_cube*',
-        'name': "Usman's Cube",
-        'source': TUTOR,
-    },
-    56212: {
-        'path_regex': 'aarons_450_cube*',
-        'name': "Aaron's 450 Cube",
-        'source': TUTOR
-    },
-    58025: {
-        'path_regex': 'andys_sweet_synergy*',
-        'name': "Andy's Sweet Synergy",
-        'source': TUTOR
+    'wtwlf123': {
+        'path_regex': 'wtwlf123*',
+        'name': "wtwlf123's Cube"
     },
     '450_powered': {
         'path_regex': 'Simple_Mans450Powered*',
-        'name': "Simple Man's 450 Powered",
-        'source': COBRA
+        'name': "Simple Man's 450 Powered"
+    },
+    'dekkaru': {
+        'path_regex': 'Dekkaru*',
+        'name': "Dekkaru Cube"
+    },
+    'scgconcube': {
+        'path_regex': 'SCGCON*',
+        'name': 'SCG Con Cube',
+    },
+    'culticcube': {
+        'path_regex': 'Eleusis*',
+        'name': 'Eleusis'
+    },
+    'unpowered_fair_stuff': {
+        'path_regex':  'UnpoweredFair*',
+        'name': "Funch's Unpowered Fair Stuff"
+    },
+    'powered_unfair_stuff': {
+        'path_regex':  'PoweredUnfair*',
+        'name': "Funch's Powered Unfair Stuff"
+    },
+    '1001': {
+        'path_regex': 'Chimaera*',
+        'name': 'Chimaera540',
     }
 }
 
@@ -99,11 +98,8 @@ def get_file_match(filename):
             return LIST_DIR + '/' + file
 
 
-def cube_name(cube_id, source, date_str):
-    if source==TUTOR:
-        link = 'https://www.cubetutor.com/viewcube/{}'.format(cube_id)
-    else:
-        link = 'https://cubecobra.com/cube/overview/{}'.format(cube_id)
+def cube_name(cube_id, date_str):
+    link = 'https://cubecobra.com/cube/overview/{}'.format(cube_id)
     return '=HYPERLINK("{}","{} {}")'.format(link, REF_LIST_MAP[cube_id]['name'], date_str)
     
 
@@ -113,13 +109,12 @@ def main():
 
     for cube_id in LISTS:
         filename = REF_LIST_MAP[cube_id]['path_regex']
-        source = REF_LIST_MAP[cube_id]['source']
 
         fn = get_file_match(filename)
         if fn is not None:
             os.remove(fn)
 
-        download_cube_list(cube_id, LIST_DIR, source=source)
+        download_cube_list(cube_id, LIST_DIR)
         time.sleep(1)
         fn = get_file_match(filename)
         if fn is None:
@@ -128,7 +123,7 @@ def main():
             )
             continue
 
-        with open(fn) as f:
+        with open(fn, encoding='utf8') as f:
             lines0 = f.readlines()
             while True:
                 time.sleep(5)
@@ -139,7 +134,7 @@ def main():
                 logging.warning('Not finished downloading. Downloaded {} cards.'.format(len(lines)))
                 lines0 = lines
             lines = [scryfall.card_attr_line(line, ['name']) for line in lines]
-            lines.insert(0, cube_name(cube_id, source, date_str))
+            lines.insert(0, cube_name(cube_id, date_str))
             lists.append(lines)
 
         logging.info(
