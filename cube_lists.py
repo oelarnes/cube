@@ -16,9 +16,13 @@ def download_cube_list(cube_id: any, download_dir: str = ".") -> None:
     download_dir,
     response.headers['Content-disposition'].split("filename=")[1]
   )
+  
+  lines = response.text.split('\n')
+  lines = [line for line in lines if '#' not in line and len(line) > 1]
+    
+  print(f'Writing {len(lines)} lines to {filename}')
   with open(filename, 'w', encoding='utf8') as target_file:
-    target_file.write(response.text)
-
+    target_file.write('\n'.join(lines) + '\n')
 
 def main():
   parser = argparse.ArgumentParser(description="download a cube list in txt format from cubecobra.com")

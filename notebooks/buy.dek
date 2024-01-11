@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Deck xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<NetDeckID>0</NetDeckID>
+<PreconstructedDeckID>0</PreconstructedDeckID>
+  <Cards CatID="26882" Quantity="1" Sideboard="false" Name="Dryad Arbor" />
+  <Cards CatID="51966" Quantity="1" Sideboard="false" Name="Temple of Epiphany" />
+  <Cards CatID="20956" Quantity="1" Sideboard="false" Name="Serum Visions" />
+  <Cards CatID="68577" Quantity="1" Sideboard="false" Name="Vivien Reid" />
+  <Cards CatID="16338" Quantity="1" Sideboard="false" Name="Fire/Ice" />
+  <Cards CatID="65080" Quantity="1" Sideboard="false" Name="Settle the Wreckage" />
+  <Cards CatID="50570" Quantity="1" Sideboard="false" Name="Ashen Rider" />
+  <Cards CatID="61224" Quantity="1" Sideboard="false" Name="Bedlam Reveler" />
+</Deck>

@@ -1,5 +1,9 @@
 *Reference List Generation*
 
+You need to have a copy of scryfall installed and up-to-date. First, setup your venv, install the right chromedriver for your chrome installation and put it in this folder, then run
+
+>$ python 
+
 usage
 
 >$ ./prepare_cube_uploads

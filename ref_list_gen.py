@@ -9,6 +9,8 @@ from datetime import date
 from cube_lists import download_cube_list
 import scryfall
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 ENV = 'joel' if not sys.argv[:1] else sys.argv[1]
 
@@ -25,7 +27,30 @@ LIST_DIR = f'{ENV_DIR}/lists'
 
 OUT_FILE = f'{ENV_DIR}/ref_lists.csv'
 
+MAIN_LINE = '# mainboard\n'
+MAYBE_LINE = '# maybeboard\n'
+
 REF_LIST_MAP = {
+    "AlphaFrog": {
+        'path_regex': 'AlphaFrogVintageCube*',
+        'name': 'AlphaFrog Cube'
+    }, 
+    "kq": {
+        'path_regex': '450VintageUnpowered*',
+        'name': 'kq Unpowered Cube'
+    },
+    "dumbcards": {
+        'path_regex': 'dumbcardstbh*',
+        'name': 'dumb cards tbh'
+    },
+    "UsmanCube": {
+        'path_regex': 'UsmansCube*',
+        'name': "Usman's Cube",
+    },
+    "regular": {
+        'path_regex': 'RegularCube*',
+        'name': 'Regular Cube'
+    },
     'ocl': {
         'path_regex': 'OCLCube*',
         'name': 'OCL Cube'
@@ -51,7 +76,7 @@ REF_LIST_MAP = {
         'name': "Joel's Cube",
     },
     'modovintage': {
-        'path_regex': 'ModoVintageCube*',
+        'path_regex': 'MTGOVintageCube*',
         'name': 'MTGO Vintage Cube'
     },
     'ryan': {
@@ -78,20 +103,8 @@ REF_LIST_MAP = {
         'path_regex': 'Eleusis*',
         'name': 'Eleusis'
     },
-    'unpowered_fair_stuff': {
-        'path_regex':  'UnpoweredFair*',
-        'name': "Funch's Unpowered Fair Stuff"
-    },
-    'powered_unfair_stuff': {
-        'path_regex':  'PoweredUnfair*',
-        'name': "Funch's Powered Unfair Stuff"
-    },
-    '1001': {
-        'path_regex': 'Chimaera*',
-        'name': 'Chimaera540',
-    }
 }
-
+                                       
 def get_file_match(filename):
     for file in os.listdir(LIST_DIR):
         if fnmatch.fnmatch(file, filename):
@@ -133,12 +146,15 @@ def main():
                     break
                 logging.warning('Not finished downloading. Downloaded {} cards.'.format(len(lines)))
                 lines0 = lines
+                        
+            logging.info(f'{cube_id} downloaded')
+                        
             lines = [scryfall.card_attr_line(line, ['name']) for line in lines]
             lines.insert(0, cube_name(cube_id, date_str))
             lists.append(lines)
 
         logging.info(
-            f'{cube_id} downloaded as {filename}'
+            f'{cube_id} processed as {filename}'
         )
 
     try:

@@ -28,6 +28,8 @@ COLOR_NAME_MAP = {
     "GRU":  "Temur",
     "RUW":  "Jeskai",
     "BRW":  "Mardu",
+    "GRUW": "Non-Black",
+    "BGUW": "Non-Red",
     "BGRUW":    "Five-Color",
     "":     "Colorless",
 }
