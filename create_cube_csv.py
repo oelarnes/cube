@@ -11,6 +11,7 @@ logging.basicConfig(filename='cube_csv.log',level=logging.WARNING)
 attrs = sys.argv if len(sys.argv[1:]) else scryfall.CUBE_ATTRS
 
 # print(scryfall.join_line([scryfall.get_attr_name(attr) for attr in attrs]))
+client = scryfall.get_client()
 
 for line in sys.stdin:
-    print(scryfall.card_attr_line(line, attrs))
+    print(scryfall.card_attr_line(client, line, attrs))

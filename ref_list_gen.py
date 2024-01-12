@@ -119,6 +119,7 @@ def cube_name(cube_id, date_str):
 def main():
     lists = []
     date_str = date.today().strftime('%d%b%y')
+    scryfall_client = scryfall.get_client()
 
     for cube_id in LISTS:
         filename = REF_LIST_MAP[cube_id]['path_regex']
@@ -139,7 +140,7 @@ def main():
         with open(fn, encoding='utf8') as f:
             lines0 = f.readlines()
             while True:
-                time.sleep(5)
+                time.sleep(2)
                 f.seek(0)
                 lines = f.readlines()
                 if lines == lines0:
@@ -148,8 +149,9 @@ def main():
                 lines0 = lines
                         
             logging.info(f'{cube_id} downloaded')
-                        
-            lines = [scryfall.card_attr_line(line, ['name']) for line in lines]
+
+                       
+            lines = [scryfall.card_attr_line(scryfall_client, line, ['name']) for line in lines]
             lines.insert(0, cube_name(cube_id, date_str))
             lists.append(lines)
 

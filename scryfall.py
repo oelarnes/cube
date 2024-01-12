@@ -10,6 +10,9 @@ SEP_TYPE = 'Pipe'
 CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes', 'cube_sort_order']
 SET_ATTRS = ['name_with_image_link', 'set_template_sort_order', 'color_identity_name', 'type', 'rarity', 'cmc', 'subtypes', 'power', 'toughness', 'oracle_one_line']
 
+def get_client():
+    return pymongo.MongoClient()
+
 def get_attr_name(attr):
     map = {
         'cmc': 'CMC',
@@ -21,8 +24,7 @@ def get_attr_name(attr):
     return attr.replace('_',' ').title()
 
 
-def get_card_by_id(mtgo_id):
-    client = pymongo.MongoClient()
+def get_card_by_id(client, mtgo_id):
     cards_en = client.scryfall.cards_en
 
     query = {
@@ -41,34 +43,61 @@ def get_card_by_id(mtgo_id):
     return card
 
 
-def get_card(card_name, set=None):
-    client = pymongo.MongoClient()
+def get_card(client, card_name, set=None):
     cards_en = client.scryfall.cards_en
 
     overrides = get_overrides()
     card_name = overrides['names'].get(card_name, card_name)
 
-    query = {
-        'name': card_name
+    base_query = {
+        'set_type': {'$in': ['draft_innovation', 'expansion', 'commander', 'core', 'starter', 'funny']},
+        'frame_effects': {'$nin': ['showcase', 'extendedart', 'borderless']},
     }
 
     if set is not None:
-        query['set'] = set
+        base_query['set'] = set
+
+    query = {'name': card_name}
+    query.update(base_query)
 
     card = cards_en.find_one(query, sort=[('released_at', pymongo.ASCENDING)])
 
     if card is None:
-        query = {
+        # separate this query since it will make it slower to combine
+        query = {            
             'card_faces': {
                 '$elemMatch': {
                     'name': card_name
                 }
-            }
+            },
         }
+        query.update(base_query)
+
+        card = cards_en.find_one(query, sort=[('released_at', pymongo.ASCENDING)])
+
+    if card is None:
+        query = {
+            '$or': [
+                {
+                    'name': card_name,
+                },
+                {
+                    'card_faces': {
+                        '$elemMatch': {
+                            'name': card_name
+                        }
+                    }
+                }
+            ],
+            'set_type' : {
+                '$ne': 'memorabilia'
+            }
+        }                
+
         if set is not None:
             query['set'] = set
 
-        card = cards_en.find_one(query, sort=[('released_at', pymongo.ASCENDING)])
+        card = cards_en.find_one(query, sort=[('released_at', pymongo.ASCENDING), ('collector_number', pymongo.ASCENDING)])
 
     if card is None:
         error_message = 'No match for card name {}'.format(card_name)
@@ -83,7 +112,7 @@ def form_query(query_params):
     elements = ['{}:{}'.format(it[0], it[1]) for it in query_params.items()]
     return '+'.join(elements)
 
-def card_attr_line(card_input, attrs):
+def card_attr_line(client, card_input, attrs):
     split = card_input.strip('\n').split('|')
     card_name = split[0].strip()
 
@@ -92,7 +121,7 @@ def card_attr_line(card_input, attrs):
     else:
         set = None
 
-    card = get_card(card_name, set=set)
+    card = get_card(client, card_name, set=set)
     if card is None:
         card_attr_line = [card_name if (attr == 'name') else '' for attr in attrs]
     else:
