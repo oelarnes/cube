@@ -11,10 +11,12 @@ CACHE_DIR=$(jq -r .$CUBE_ENV.cache_dir < cube_config.json)
 
 # python scryfall_cache.py
 
+rm -f $CACHE_DIR/lists/*
 echo "Downloading and generating reference list sheet"
 python ref_list_gen.py $CUBE_ENV
 
 rm -f $CACHE_DIR/card_reference.csv
+
 rm -f cube_csv.log
 
 echo "Processing and uniquing cube_raw.txt"

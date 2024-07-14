@@ -27,9 +27,6 @@ LIST_DIR = f'{ENV_DIR}/lists'
 
 OUT_FILE = f'{ENV_DIR}/ref_lists.csv'
 
-MAIN_LINE = '# mainboard\n'
-MAYBE_LINE = '# maybeboard\n'
-
 REF_LIST_MAP = {
     "AlphaFrog": {
         'path_regex': 'AlphaFrogVintageCube*',
@@ -47,9 +44,13 @@ REF_LIST_MAP = {
         'path_regex': 'UsmansCube*',
         'name': "Usman's Cube",
     },
-    "regular": {
-        'path_regex': 'RegularCube*',
-        'name': 'Regular Cube'
+    "LSVCube": {
+        "path_regex": "LSVCube*",
+        'name': 'LSVCube',
+    },
+    "mengucube": {
+        'path_regex': 'VintageMenguCube*',
+        'name': 'Vintage MenguCube'
     },
     'ocl': {
         'path_regex': 'OCLCube*',
@@ -173,3 +174,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
