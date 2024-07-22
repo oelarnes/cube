@@ -33,7 +33,7 @@ def populate_cache():
         {}, 
         {   
             '$set': {
-                'as_of': f'{datetime.datetime.utcnow().isoformat(timespec="milliseconds")}Z'
+                'as_of': f'{datetime.datetime.now(datetime.UTC).isoformat(timespec="milliseconds")}Z'
             }
         }, 
         upsert=True

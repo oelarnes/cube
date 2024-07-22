@@ -81,6 +81,21 @@
         "Garruk Relentless": {
             "color_identity": "G"
         },
+        "Tamiyo, Inquisitive Student": {
+            "color_identity": "U"
+        },
+        "Ajani, Nacatl Pariah": {
+            "color_identity": "W"
+        },
+        "Grist, the Hunger Tide": {
+            "color_identity": "G"
+        },
+        "Ral, Monsoon Mage": {
+            "color_identity": "R"
+        },
+        "Sorin of House Markov": {
+            "color_identity": "B"
+        },
         "Status // Statue": {
             "cmc": 4
         },

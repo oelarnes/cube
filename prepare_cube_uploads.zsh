@@ -9,7 +9,8 @@ fi
 
 CACHE_DIR=$(jq -r .$CUBE_ENV.cache_dir < cube_config.json)
 
-# python scryfall_cache.py
+echo "Updating MongoDb cache of Scryfall"
+python scryfall_cache.py
 
 rm -f $CACHE_DIR/lists/*
 echo "Downloading and generating reference list sheet"
