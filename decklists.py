@@ -3,8 +3,7 @@ import os
 import xml.etree.ElementTree as ET
 import requests
 
-from scryfall import get_card, get_card_by_id
-from card_attrs import get_attr
+from magic_data_utils.scryfall import get_card, get_card_by_id, get_attr
 
 OUT_DIR = 'share'
 

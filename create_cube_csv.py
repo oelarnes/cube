@@ -4,7 +4,7 @@
 # populate card_ref.txt with unique list of cards, then
 # usage 'python create_cube_csv.py < card_ref.txt > cache/cube.csv'
 
-import scryfall, sys, logging
+import magic_data_utils.scryfall as scryfall, sys, logging
 
 logging.basicConfig(filename='cube_csv.log',level=logging.WARNING)
 

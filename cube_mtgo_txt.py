@@ -2,7 +2,8 @@
 # create_cube_dec.py
 
 from cube_lists import download_cube_list
-import scryfall, time, logging
+import magic_data_utils.scryfall as scryfall
+import time, logging
 
 CUBE_ID = 'ocl'
 CUBE_FILENAME = 'ocl_cube.txt'

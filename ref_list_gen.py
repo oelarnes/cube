@@ -7,7 +7,7 @@ import json
 from datetime import date
 
 from cube_lists import download_cube_list
-import scryfall
+import magic_data_utils.scryfall as scryfall
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
