@@ -1,4 +1,4 @@
-{
+OVERRIDES = {
     "attrs": {
         "Greater Gargadon": {
             "cmc": 1
@@ -81,6 +81,21 @@
         "Garruk Relentless": {
             "color_identity": "G"
         },
+        "Tamiyo, Inquisitive Student": {
+            "color_identity": "U"
+        },
+        "Ajani, Nacatl Pariah": {
+            "color_identity": "W"
+        },
+        "Grist, the Hunger Tide": {
+            "color_identity": "G"
+        },
+        "Ral, Monsoon Mage": {
+            "color_identity": "R"
+        },
+        "Sorin of House Markov": {
+            "color_identity": "B"
+        },
         "Status // Statue": {
             "cmc": 4
         },
@@ -116,3 +131,89 @@
         "Lim-Dul's Vault": "Lim-Dûl's Vault"
     }
 }
+
+COLOR_NAME_MAP = {
+    "W":    "White",
+    "U":    "Blue",
+    "B":    "Black",
+    "R":    "Red",
+    "G":    "Green",
+    "UW":   "Azorius",
+    "BU":   "Dimir",
+    "BR":   "Rakdos",
+    "GR":   "Gruul",
+    "GW":   "Selesnya",
+    "BW":   "Orzhov",
+    "BG":   "Golgari",
+    "GU":   "Simic",
+    "RU":   "Izzet",
+    "RW":   "Boros",
+    "BUW":  "Esper",
+    "BRU":  "Grixis",
+    "BGR":  "Jund",
+    "GRW":  "Naya",
+    "GUW":  "Bant",
+    "BGW":  "Abzan",
+    "BGU":  "Sultai",
+    "GRU":  "Temur",
+    "RUW":  "Jeskai",
+    "BRW":  "Mardu",
+    "GRUW": "Non-Black",
+    "BGUW": "Non-Red",
+    "BGRUW":"Five-Color",
+    "":     "Colorless"
+}
+COLOR_NAME_ORDER = [
+    "White",
+    "Blue",
+    "Black",
+    "Red",
+    "Green",
+    "Azorius",
+    "Dimir",
+    "Rakdos",
+    "Gruul",
+    "Selesnya",
+    "Orzhov",
+    "Golgari",
+    "Simic",
+    "Izzet",
+    "Boros",
+    "Esper",
+    "Grixis",
+    "Jund",
+    "Naya",
+    "Bant",
+    "Abzan",
+    "Sultai",
+    "Temur",
+    "Jeskai",
+    "Mardu",
+    "Non-Black",
+    "Non-Red",
+    "Five-Color",
+    "Colorless"
+]
+
+RARITY_ORDER = [
+    'common',
+    'uncommon',
+    'rare',
+    'mythic'
+]
+
+TYPE_ORDER = [
+    "Creature",
+    "Artifact Creature",
+    "Enchantment Creature",
+    "Planeswalker",
+    "Instant",
+    "Sorcery",
+    "Artifact",
+    "Enchantment",
+    "Enchantment Artifact",
+    "Land",
+]
+
+SET_TEMPLATE_RANK = ['rarity_rank', 'color_identity_rank', 'type_rank', 'cmc', 'name']
+CUBE_RANK = ['color_identity_rank', 'type_rank', 'cmc', 'name']

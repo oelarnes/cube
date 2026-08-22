@@ -4,14 +4,11 @@
 # populate card_ref.txt with unique list of cards, then
 # usage 'python create_cube_csv.py < card_ref.txt > cache/cube.csv'
 
-import magic_data_utils.scryfall as scryfall, sys, logging
+from mdu.scryfall import cube_attr_line, sys, logging
 
 logging.basicConfig(filename='cube_csv.log',level=logging.WARNING)
 
-attrs = sys.argv if len(sys.argv[1:]) else scryfall.CUBE_ATTRS
-
-# print(scryfall.join_line([scryfall.get_attr_name(attr) for attr in attrs]))
-client = scryfall.get_client()
+# attrs = sys.argv if len(sys.argv[1:]) else scryfall.CUBE_ATTRS
 
 for line in sys.stdin:
-    print(scryfall.card_attr_line(client, line, attrs))
+    print(cube_attr_line(line))
