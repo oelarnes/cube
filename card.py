@@ -1,7 +1,7 @@
 import re
-import spells.config.scryfall_cfg as config
+import scryfall_cfg as config
 
-CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes', 'cube_sort_order']
+CUBE_ATTRS = ['name', 'image_link', 'color_identity_name', 'type', 'cmc', 'subtypes', 'usd', 'cube_sort_order']
 SET_ATTRS = ['name_with_image_link', 'set_template_sort_order', 'color_identity_name', 'type', 'rarity', 'cmc', 'subtypes', 'power', 'toughness', 'oracle_one_line']
 
 def _sort_order_string(rank_list):
@@ -59,8 +59,8 @@ class Card():
         self.image_link_large = self.image_uris['large'] if 'large' in self.image_uris else ''
 
         if self.name in self._overrides:
-            for attr in overrides:
-                setattr(self, attr, overrides[attr])
+            for attr, value in self._overrides[self.name].items():
+                setattr(self, attr, value)
 
     @property
     def type(self):
@@ -71,10 +71,10 @@ class Card():
     
     @property
     def type_rank(self):
-        self.type_rank = _rank_by_order(self.type, config.TYPE_ORDER)
+        return _rank_by_order(self.type, config.TYPE_ORDER)
     
     @property
-    def subtype(self):
+    def subtypes(self):
         return self.type_line.split(' — ')[1].split(' // ')[0] if '—' in self.type_line else ''
     
     @property
@@ -107,6 +107,10 @@ class Card():
     @property
     def pt(self):
         return '{}/{}'.format(self.power, self.toughness) if self.power != '' and self.toughness != '' else ''
+
+    @property
+    def usd(self):
+        return (self.prices or {}).get('usd') or ''
     
     @property
     def image_tag(self):
@@ -122,7 +126,7 @@ class Card():
     
     @property
     def image_link(self):
-        return self.image_uris[self.IMAGE_SIZE_DEFAULT]
+        return self.image_uris[self.IMAGE_SIZE_DEFAULT] if self.IMAGE_SIZE_DEFAULT in self.image_uris else ''
 
     @property
     def mtgo_name(self):
@@ -148,7 +152,11 @@ class Card():
     
     @property
     def cmc(self):
-        return int(self.__dict__['cmc'])
+        return int(self.__dict__['cmc']) if 'cmc' in self.__dict__ else ''
+
+    @cmc.setter
+    def cmc(self, value):
+        self.__dict__['cmc'] = value
     
     def attr_line(self, attrs):
         return _join_line([_format_attr(getattr(self, attr)) for attr in attrs], self.SEP_TYPE)

@@ -1,18 +1,14 @@
 import logging
-import fnmatch
 import os
-import time
 import sys
 import json
 from datetime import date
 
-from cube_lists import download_cube_list
-import magic_data_utils.scryfall as scryfall
-
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+from cube_lists import download_cube_list, get_cube_name
+from scryfall import Scryfall
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-ENV = 'joel' if not sys.argv[:1] else sys.argv[1]
+ENV = sys.argv[1] if len(sys.argv) > 1 else 'joel'
 
 with open('cube_config.json') as config_file:
     config = json.load(config_file)[ENV]
@@ -20,144 +16,45 @@ with open('cube_config.json') as config_file:
 CACHE_DIR = config['cache_dir']
 LISTS = config['lists']
 
-logging.basicConfig(filename='logs/ref_list_gen.log',level=logging.WARNING)
+os.makedirs(f'{ROOT_DIR}/logs', exist_ok=True)
+logging.basicConfig(filename=f'{ROOT_DIR}/logs/ref_list_gen.log', level=logging.WARNING)
 
 ENV_DIR = f'{ROOT_DIR}/{CACHE_DIR}'
 LIST_DIR = f'{ENV_DIR}/lists'
 
 OUT_FILE = f'{ENV_DIR}/ref_lists.csv'
 
-REF_LIST_MAP = {
-    "AlphaFrog": {
-        'path_regex': 'AlphaFrogVintageCube*',
-        'name': 'AlphaFrog Cube'
-    }, 
-    "kq": {
-        'path_regex': '450VintageUnpowered*',
-        'name': 'kq Unpowered Cube'
-    },
-    "dumbcards": {
-        'path_regex': 'dumbcardstbh*',
-        'name': 'dumb cards tbh'
-    },
-    "UsmanCube": {
-        'path_regex': 'UsmansCube*',
-        'name': "Usman's Cube",
-    },
-    "LSVCube": {
-        "path_regex": "LSVCube*",
-        'name': 'LSVCube',
-    },
-    "mengucube": {
-        'path_regex': 'VintageMenguCube*',
-        'name': 'Vintage MenguCube'
-    },
-    'ocl': {
-        'path_regex': 'OCLCube*',
-        'name': 'OCL Cube'
-    },
-    'ocli': {
-        'path_regex': 'OCLInteractiveCube*',
-        'name': 'OCL Interactive Cube'
-    },
-    'oclp': {
-        'path_regex': 'OCLPoweredCube*',
-        'name': 'OCL Powered Cube'
-    },
-    'oclmaster': {
-        'path_regex': 'CubeMaster*',
-        'name': 'Joel\'s Cube Master',
-    },
-    'oclcollection': {
-        'path_regex': 'OCLOwned*',
-        'name': 'OCL Owned Cards'
-    },
-    'joel': {
-        'path_regex': 'JoelsCube*',
-        'name': "Joel's Cube",
-    },
-    'modovintage': {
-        'path_regex': 'MTGOVintageCube*',
-        'name': 'MTGO Vintage Cube'
-    },
-    'ryan': {
-        'path_regex': 'RyanSaxe*',
-        'name': "Ryan's Cube"
-    },
-    'wtwlf123': {
-        'path_regex': 'wtwlf123*',
-        'name': "wtwlf123's Cube"
-    },
-    '450_powered': {
-        'path_regex': 'Simple_Mans450Powered*',
-        'name': "Simple Man's 450 Powered"
-    },
-    'dekkaru': {
-        'path_regex': 'Dekkaru*',
-        'name': "Dekkaru Cube"
-    },
-    'scgconcube': {
-        'path_regex': 'SCGCON*',
-        'name': 'SCG Con Cube',
-    },
-    'culticcube': {
-        'path_regex': 'Eleusis*',
-        'name': 'Eleusis'
-    },
-}
-                                       
-def get_file_match(filename):
-    for file in os.listdir(LIST_DIR):
-        if fnmatch.fnmatch(file, filename):
-            return LIST_DIR + '/' + file
-
+os.makedirs(LIST_DIR, exist_ok=True)
 
 def cube_name(cube_id, date_str):
     link = 'https://cubecobra.com/cube/overview/{}'.format(cube_id)
-    return '=HYPERLINK("{}","{} {}")'.format(link, REF_LIST_MAP[cube_id]['name'], date_str)
-    
+    return '=HYPERLINK("{}","{} {}")'.format(link, get_cube_name(cube_id), date_str)
+
 
 def main():
     lists = []
     date_str = date.today().strftime('%d%b%y')
-    scryfall_client = scryfall.get_client()
+    scryfall_client = Scryfall()
 
     for cube_id in LISTS:
-        filename = REF_LIST_MAP[cube_id]['path_regex']
-
-        fn = get_file_match(filename)
-        if fn is not None:
-            os.remove(fn)
-
-        download_cube_list(cube_id, LIST_DIR)
-        time.sleep(1)
-        fn = get_file_match(filename)
-        if fn is None:
-            logging.warning(
-                'Download id {} failed to produce expected filename {}.'.format(cube_id, filename)
-            )
+        try:
+            fn = download_cube_list(cube_id, LIST_DIR)
+        except Exception as e:
+            logging.warning('Download id {} failed: {}'.format(cube_id, e))
             continue
 
         with open(fn, encoding='utf8') as f:
-            lines0 = f.readlines()
-            while True:
-                time.sleep(2)
-                f.seek(0)
-                lines = f.readlines()
-                if lines == lines0:
-                    break
-                logging.warning('Not finished downloading. Downloaded {} cards.'.format(len(lines)))
-                lines0 = lines
-                        
+            lines = [line for line in f.readlines() if line.strip()]
+
             logging.info(f'{cube_id} downloaded')
 
-                       
-            lines = [scryfall.card_attr_line(scryfall_client, line, ['name']) for line in lines]
-            lines.insert(0, cube_name(cube_id, date_str))
-            lists.append(lines)
+            names = [scryfall_client.get_card(line.strip()).name for line in lines]
+            unique_names = list(dict.fromkeys(names))
+            unique_names.insert(0, cube_name(cube_id, date_str))
+            lists.append(unique_names)
 
         logging.info(
-            f'{cube_id} processed as {filename}'
+            f'{cube_id} processed as {fn}'
         )
 
     try:
