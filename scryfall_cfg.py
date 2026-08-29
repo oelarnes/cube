@@ -87,8 +87,11 @@ OVERRIDES = {
         "Ajani, Nacatl Pariah": {
             "color_identity": "W"
         },
-        "Grist, the Hunger Tide": {
+        "Grist, Voracious Larva": {
             "color_identity": "G"
+        },
+        "Cecil, Dark Knight": {
+            "color_identity": "B"
         },
         "Ral, Monsoon Mage": {
             "color_identity": "R"
@@ -104,6 +107,9 @@ OVERRIDES = {
         },
         "Urborg, Tomb of Yawgmoth": {
             "color_identity": "B"
+        },
+        "Yavimaya, Cradle of Growth": {
+            "color_identity": "G"
         },
         "Never // Return": {
             "cmc": 3

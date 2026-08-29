@@ -1,16 +1,16 @@
 *Reference List Generation*
 
-You need to have a copy of scryfall installed and up-to-date. First, setup your venv, install the right chromedriver for your chrome installation and put it in this folder, then run
+Set up the environment:
 
->$ python 
+>$ pdm install
 
-usage
+Then run
 
->$ ./prepare_cube_uploads
+>$ ./prepare_cube_uploads.zsh
 
 or
 
->$ ./prepare_cube_uploads [CUBE_ENV]
+>$ ./prepare_cube_uploads.zsh [CUBE_ENV]
 
 where CUBE_ENV is configured in cube_config.json
 
@@ -24,6 +24,3 @@ maintained in the card_reference sheet by means of cubes_raw.txt and always_incl
 
 cube_raw.txt can be pasted from the Decks and/or Lists sheet.
 always_include.txt is to be maintained manually. Cards may be removed after they appear on a list.
-
-**Default Behavior**
-

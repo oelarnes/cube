@@ -1,4 +1,4 @@
-from magic_data_utils.scryfall import populate_cache
+from scryfall import refresh_cache
 
 if __name__ == '__main__':
-    populate_cache()
+    refresh_cache()

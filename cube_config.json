@@ -2,36 +2,18 @@
     "joel": {
         "cache_dir": "cache",
         "lists" : [
-            "dekkaru",
-            "modovintage", 
-            "AlphaFrog", 
+            "mtgapc",
+            "tabletop",
             "wtwlf123",
-            "culticcube",
+            "andymangold",
+            "strongestcube",
             "450_powered",
-            "kq",
-            "LSVCube",
             "UsmanCube",
-            "mengucube",
-            "oclp",
-            "joel",
-            "oclmaster"
-        ]
-    },
-    "ocl": {
-        "cache_dir": "cache_ocl",
-        "lists": [
-            "dekkaru",
-            "modovintage", 
-            "wtwlf123",
-            "scgconcube",
-            "culticcube",
-            "450_powered",
-            "1001",
-            "joel",
-            "ocli",
-            "oclp",
+            "LSVCube",
+            "PowerLSV",
+            "modovintage",
             "oclmaster",
-            "oclcollection"
+            "joel"
         ]
     }
 }

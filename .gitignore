@@ -11,5 +11,7 @@ chromedriver
 cache/
 cache_public_medium/
 venv/
+.venv/
+.pdm-python
 .vscode/
 logs
